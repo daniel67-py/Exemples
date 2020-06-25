@@ -1,0 +1,1115 @@
+###########################################################################################
+### Ce fichier renferme les exemples de programmes en Python3.8 présent dans mon manuel ###
+### traitant justement de ce fameux langage de programmation                            ###
+### ils sont disponibles ici gratuitement pour vous permettre de les essayer            ###
+###########################################################################################
+### Daniel, le 7 Février 2020                                                           ###
+###########################################################################################
+
+-------------------------------------------------------------------------------------------
+
+### Premier exemple de programmation en Python ###
+
+#!/usr/bin/python3
+# -*- coding: Utf-8 -*-
+
+# ceci est un premier script en Python
+print("Hello world !")
+prenom = input("Quel est votre prénom ? ")
+print(f"Bonjour à vous, {prenom}")
+
+-------------------------------------------------------------------------------------------
+
+### Pierre - Papier - Ciseaux avec le module RANDOM ###
+
+#!/usr/bin/python3
+#-*- coding : Utf-8 -*-
+from random import *
+
+###############################################################################
+# variables du programme
+###############################################################################
+liste = ["pierre", "papier", "ciseaux"] # choix possible
+nb_victoire_joueur = 0                  # compteur de victoire joueur
+nb_victoire_python = 0                  # compteur de victoire Python
+nb_tours = 4                            # nombre de tour(s)
+
+###############################################################################
+# parties de jeu
+###############################################################################
+for x in range(nb_tours):  # une boucle qui va itérer entre 0 et nb_tours
+                   
+    # choix d'un item avec choice et prise en compte du choix du joueur
+    selection = choice(liste)
+    print("choisi entre pierre, papier et ciseaux")
+    choix = input("que prends tu ?")
+
+    # les conditions sont mises en listes, si l'un d'eux est valable, any()
+    # retournera True plus loin dans les conditions if...
+    match_nul = [
+        choix == "papier" and selection == "papier",
+        choix == "pierre" and selection == "pierre",
+        choix == "ciseaux" and selection == "ciseaux"
+        ]
+    gagne = [
+        choix == "papier" and selection == "pierre",
+        choix == "pierre" and selection == "ciseaux",
+        choix == "ciseaux" and selection == "papier"
+        ]
+    perds = [
+        choix == "papier" and selection == "ciseaux",
+        choix == "ciseaux" and selection == "pierre",
+        choix == "pierre" and selection == "papier"
+        ]
+
+    # interrogation des conditions avec any()
+    if any(match_nul):
+        print("Match nul !")
+    elif any(gagne):
+        print("Tu gagnes !")
+        nb_victoire_joueur = nb_victoire_joueur + 1
+    elif any(perds):
+        print("Tu perds !")
+        nb_victoire_python = nb_victoire_python + 1
+    else:
+        print("Ce n'est pas un choix valable ! Tu perds !")
+
+# au final, une fois la partie finie, on fait le compte des points marqués.
+if nb_victoire_joueur > nb_victoire_python:
+    print(f"Tu gagnes le match en {nb_tours} rounds avec {nb_victoire_joueur} victoires !")
+elif nb_victoire_joueur == nb_victoire_python:
+    print("Match nul avec Python...")
+elif nb_victoire_joueur < nb_victoire_python:
+    print("Python gagne le match !")
+
+-------------------------------------------------------------------------------------------
+
+### Plus Ou Moins , module RANDOM, essais et conditions ###
+
+#!/usr/bin/python3
+#-*- coding: Utf-8 -*-
+from random import *
+
+###############################################################################
+# variables du programme
+###############################################################################
+selection = randint(0, 10)
+nb_tours = 4
+###############################################################################
+# parties de jeu
+###############################################################################
+print(f"J'ai choisi un nombre entre 0 et 10, essai de le trouver en {nb_tours} coups.")
+for x in range(nb_tours):
+    choix = input(" : ")
+    try:
+        choix = int(choix)
+        if choix == selection:
+            print("Bravo tu as trouvé !")
+            break
+        elif choix < selection:
+            print("Trop faible, réessaye...")
+        elif choix > selection:
+            print("Trop fort, réessaye...")
+        else:
+            print("ce n'est pas une réponse valable !")
+    except ValueError or TypeError:
+        print("Donne un nombre entier et rien d'autres !")
+
+-------------------------------------------------------------------------------------------
+
+### Un Bloc-Note en Python ###
+
+#!/usr/bin/python3
+#-*- coding: Utf-8 -*-
+
+class Blocnote():
+    # définir les variables propres au programme :
+    def __init__(self):
+        self.contenu = ""   # le contenu de la note de type str
+        self.notes = "blocnote.txt" # le fichier contenant la note
+
+    # affichage d'un petit interface utilisateur en utilisant une fonction
+    def principal(self):
+        try:    # essai de lecture du fichier si il existe
+            with open(self.notes, "r") as fichier:
+                self.contenu = fichier.read()
+        except: # si il n'existe pas, le créer...
+            fichier = open(self.notes, "w")
+            fichier.close()
+
+        # affichage du contenu et du choix de l'utilisateur
+        print("dernière note : \n".upper(), self.contenu)
+        print("Voulez vous : effacer (1), rajouter (2), quitter (3)")
+        choix = input("votre choix : ")
+
+        # les conditions et la redirection vers une autre fonction selon le choix
+        if choix == "1":
+            self.effacer_note()
+        elif choix == "2":
+            self.rajouter_note()
+        elif choix == "3":
+            quit()
+        else:
+            print("ceci n'est pas un choix valable !")
+            self.principal()
+
+    # si l'utilisateur souhaite supprimer le contenu
+    def effacer_note(self):
+        # définition d'un contenu vide
+        self.contenu = ""
+        # appel du fichier et écriture du nouveau contenu
+        with open(self.notes, "w") as fichier:
+            fichier.write(self.contenu)
+        # et retour à l'interface principale
+        self.principal()
+
+    # si l'utilisateur souhaite rajouter du texte à la note existante
+    def rajouter_note(self):
+        # définition d'un input et petit formatage du message
+        note_a_rajouter = input("Rentrez votre message : ")
+        note_a_rajouter = note_a_rajouter + "\n"
+        # appel du fichier et ajout du message
+        with open(self.notes, "a") as fichier:
+            fichier.write(note_a_rajouter)
+        # et retour à l'interface principale
+        self.principal()
+
+# ne reste qu'à définir un nouvel objet Blocnote et appeler la fonction
+# principale de ce nouvel objet
+essai = Blocnote()
+essai.principal()
+
+-------------------------------------------------------------------------------------------
+
+### Un répertoire avec Pickle ###
+
+#!/usr/bin/python3
+#-*- coding: Utf-8 -*-
+from pickle import *
+
+class Repertoire():
+    def __init__(self):
+        # initialisation des variables de la classe
+        self.mon_repertoire = []
+        self.fichier_repertoire = "adresses"
+
+    # fonction principale qui fera office de petit interface pour l'utilisateur
+    def principal(self):
+        # essai d'ouvrir le fichier contenant les données, sinon créé le… 
+        try:
+            self.mon_repertoire = load(open(self.fichier_repertoire, "rb"))
+        except:
+            with open(self.fichier_repertoire, "wb") as fichier:
+                # retourne cette phrase si un nouveau fichier est créé.
+                print("nouveau répertoire initié.")
+        # l'affichage de l'interface et du choix de l'utilisateur
+        print("\nrépertoire téléphonique".upper())
+        print("1. ajouter un contact")
+        print("2. supprimer un contact")
+        print("3. consulter le répertoire")
+        print("4. quitter")
+        choix = input("que souhaitez vous faire ? ")
+        # fonctions à appeler selon le choix
+        if choix == "1":
+            self.ajout_contact()
+        elif choix == "2":
+            self.supprimer_contact()
+        elif choix == "3":
+            self.consulter_repertoire()
+        elif choix == "4":
+            quit()
+        else:
+            print("choix non valable !")
+            self.principal()
+
+    # fonction d'ajout d'un contact
+    def ajout_contact(self):
+        # affichage
+        print("\nAjouter un contact :")
+        prenom = input("Prénom : ")
+        teleph = input("Téléphone : ")
+        # traitement des informations données
+        contact = {"prenom": prenom, "telephone": teleph}
+        self.mon_repertoire.append(contact) # rajout à la liste du dict. contact
+        # ne reste qu'à enregistrer le nouveau répertoire en écrasant l'ancien
+        dump(self.mon_repertoire, open(self.fichier_repertoire, "wb"))
+        print("Contact rajouté !")  # préviens l'utilisateur que le job est ok
+        # et reviens à la fonction principale
+        self.principal()
+
+    # fonction de suppression d'un contact
+    def supprimer_contact(self):
+        # affichage
+        print("\nQui souhaitez vous supprimer ? ")
+        prenom = input("Prénom : ")
+        # boucle de recherche du prénom du contact à supprimer
+        for x in self.mon_repertoire:
+            if x.get("prenom") == prenom:
+                self.mon_repertoire.remove(x) # quand tu le trouve, remove...
+                print("Contact supprimé !")   # et préviens que c'est fait
+        # ne reste qu'à enregistrer le nouveau répertoire en écrasant l'ancien
+        dump(self.mon_repertoire, open(self.fichier_repertoire, "wb"))
+        # et reviens à la fonction principale
+        self.principal()
+
+    def consulter_repertoire(self):
+        # affichage du répertoire grâce à une boucle
+        print("\nVoilà votre carnet : ")
+        for x in self.mon_repertoire:
+            print(x.get("prenom"), x.get("telephone"))
+        # un input pour ne pas revenir de suite à la fonction principale
+        attente = input("appuyez sur entrée pour revenir...")
+        # et seulement après validation, retour à la fonction principale
+        self.principal()
+
+# appel du notre classe Repertoire en instiguant un nouvel objet
+# et en évoquant la fonction principal()
+essai = Repertoire()
+essai.principal()
+
+-------------------------------------------------------------------------------------------
+
+### Un gestionnaire de bases SQLITE3 en Python ###
+
+#!/usr/bin/python3
+#-*- coding: Utf-8 -*-
+import os
+import csv
+import sqlite3
+from datetime import *
+
+###############################################################################
+### Classe de création d'une nouvelle base de données
+###############################################################################
+class Db_analyser_nouveau():
+    ###########################################################################
+    ### fonction initiale 
+    ###########################################################################
+    def __init__(self, database):
+        ### récupération de l'heure et de la date ###
+        instant_t = date.today()
+        moment_m = datetime.now()
+        ### petite présentation ###
+        print("### Framework d'analyse de base de données SQLite3       ###")
+        print("### dev. par Meyer Daniel, Janvier 2020 - ver.0.1        ###")
+        print(instant_t.strftime("%A %d. %m %Y"), " - ",
+              moment_m.strftime("%H:%M:%S"))
+        ### fichier à créer ###
+        self.database = database
+        ### création de la nouvelle base de données ###
+        connexion = sqlite3.connect(self.database)
+        connexion.close()
+        ### test d'accès ###
+        if os.path.exists(self.database) == True and os.path.isfile(self.database) == True:
+            print("...vérification chemin d'acces fichier...",
+                  os.path.exists(self.database))
+            print("...vérification si fichier...",
+                  os.path.isfile(self.database))
+            print("...ACCES DATAS OK...NOUVELLE BASE PRETE...")
+        else:
+            print("!!! ERREUR LORS DE LA CREATION DE LA NOUVELLE BASE DE DONNEES !!!")
+
+
+###############################################################################
+### Classe principale
+###############################################################################
+class Db_analyser():
+    ###########################################################################
+    ### fonction initiale 
+    ###########################################################################
+    def __init__(self, database):
+        ### récupération de l'heure et de la date ###
+        instant_t = date.today()
+        moment_m = datetime.now()
+        ### petite présentation ###
+        print("### Framework d'analyse de base de données SQLite3       ###")
+        print("### dev. par Meyer Daniel, Janvier 2020 - ver.0.1        ###")
+        print(instant_t.strftime("%A %d. %m %Y"), " - ",
+              moment_m.strftime("%H:%M:%S"))
+        ### fichier à analyser ###
+        self.database = database
+        ### vérification de l'existence du fichier et de son chemin d'acces ###
+        if os.path.exists(self.database) == True and os.path.isfile(self.database) == True:
+            print("...vérification chemin d'acces fichier...",
+                  os.path.exists(self.database))
+            print("...vérification si fichier...",
+                  os.path.isfile(self.database))
+            print("...ACCES DATAS OK...")
+        else: 
+            print("Fichier de base de données inexistant...")
+            self.database = None
+
+    ###########################################################################
+    ### modification d'une entrée dans une table 
+    ###########################################################################
+    def dba_modif_valeurs(self, table, colonne, ancienne_valeur, nouvelle_valeur):
+        """permet de changer une valeur par une nouvelle"""
+        ### si database est un fichier valide ###
+        if self.database != None:
+            ### connexion à la base de données ###
+            connexion = sqlite3.connect(self.database)
+            c = connexion.cursor()
+            ### concaténation de l'instruction à exécuter ###
+            instruction = (f"UPDATE {table} SET {colonne} = '{nouvelle_valeur}' WHERE {colonne} = '{ancienne_valeur}'")
+            ### affichage de l'instruction pour + de transparence ###
+            print(instruction)
+            ### essai d'execution des instructions ###
+            try:
+                c.execute(instruction)
+            except:
+                print("Impossible de modifier les valeurs, un élément ne correspond pas")
+            ### fermeture ###
+            connexion.commit()
+            connexion.close()
+        ### si database n'est pas valide ###
+        else:
+            print("Action impossible car aucune base de données ouverte")
+
+    ###########################################################################
+    ### ajout d'une entrée dans une table 
+    ###########################################################################
+    def dba_ajout_valeurs(self, table, *elements):
+        """permet de rajouter une entrée dans une table existante"""
+        ### si database est un fichier valide ###
+        if self.database != None:
+            ### connexion à la base de données ###
+            connexion = sqlite3.connect(self.database)
+            c = connexion.cursor()
+            ### concaténation de l'instruction à exécuter ###
+            instruction = (f"INSERT INTO {table} VALUES {str(elements)}")
+            ### affichage de l'instruction pour + de transparence ###
+            print(instruction)
+            ### essai d'ajout ###
+            try:
+                c.execute(instruction)
+            ### si impossible renvoi un message d'erreur ###
+            except:
+                print("Impossible de modifier les valeurs, un élement ne correspond pas")
+            ### fermeture ###
+            connexion.commit()
+            connexion.close()
+        ### si database n'est pas valide ###
+        else:
+            print("Action impossible car aucune base de données ouverte")
+
+    ###########################################################################
+    ### création d'une nouvelle table avec colonnes 
+    ###########################################################################
+    def dba_nouvelle_table(self, table, *colonnes):
+        """permet de créer une nouvelle table avec colonnes"""
+        ### si database est un fichier valide ###
+        if self.database != None:
+            ### connexion à la base de données ###
+            connexion = sqlite3.connect(self.database)
+            c = connexion.cursor()
+            ### concaténation des instructions, 1 pour créer ###
+            instruction = (f"CREATE TABLE {table} {str(colonnes)}")
+            ### affichage des instructions pour + de transparence ###
+            print(instruction)
+            ### exécution de l’instruction ###
+            c.execute(instruction)
+            ### fermeture ###
+            connexion.commit()
+            connexion.close()
+            print("Nouvelle table crée !")
+        ### si database n'est pas valide ###
+        else:
+            print("Action impossible car aucune base de données ouverte")
+
+    ###########################################################################
+    ### suppression d'une table et de son contenu 
+    ###########################################################################
+    def dba_supprime_table(self, table):
+        """permet de supprimer une table de la base de données"""
+        ### si database est un fichier valide ###
+        if self.database != None:
+            ### connexion à la base de données ###
+            connexion = sqlite3.connect(self.database)
+            c = connexion.cursor()
+            ### instruction et exécution de la suppression de la table ###
+            instruction = (f"DROP TABLE {table}")
+            ### affichage de l'instruction pour + de transparence ###
+            print(instruction)
+            ### exécution de l'instruction ###
+            try:
+                c.execute(instruction)
+                print(f"La table {table} a été supprimée !")
+            except:
+                print("Impossible de supprimer la table, elle n'existe pas")
+            ### fermeture ###
+            connexion.commit()
+            connexion.close()
+        ### si database n'est pas valide ###
+        else:
+            print("Action impossible car aucune base de données ouverte")
+
+    ###########################################################################
+    ### suppression d'une entrée 
+    ###########################################################################
+    def dba_supprime_entree(self, table, colonne, valeur):
+        """permet de supprimer une entrée dans une table"""
+        ### si database est un fichier valide ###
+        if self.database != None:
+            ### connexion à la base de données ###
+            connexion = sqlite3.connect(self.database)
+            c = connexion.cursor()
+            ### instruction et exécution de la suppression de la table ###
+            instruction = (f"DELETE FROM {table} WHERE {colonne} = '{valeur}'")
+            ### affichage de l'instruction pour + de transparence ###
+            print(instruction)
+            ### exécution de l'instruction ###
+            try:
+                c.execute(instruction)
+                print(f"La valeur {valeur} de la colonne {colonne} a été supprimée !")
+            except:
+                print("Impossible de supprimer l'entrée, elle n'existe pas")
+            ### fermeture ###
+            connexion.commit()
+            connexion.close()
+        ### si database n'est pas valide ###
+        else:
+            print("Action impossible car aucune base de données ouverte")
+
+    ###########################################################################
+    ### recherche d'une valeur dans une table
+    ###########################################################################
+    def dba_recherche_valeur(self, table, colonne, valeur):
+        """permet de rechercher une valeur dans une table"""
+        ### si database est un fichier valide ###
+        if self.database != None:
+            ### connexion à la base de données ###
+            connexion = sqlite3.connect(self.database)
+            c = connexion.cursor()
+            ### instruction et exécution de la recherche dans la table ###
+            if type(valeur) == str:
+                instruction = (f"SELECT * FROM {table} WHERE {colonne} = '{valeur}'")
+            elif type(valeur) == int or type(valeur) == float:
+                instruction = (f"SELECT * FROM {table} WHERE {colonne} = {valeur}")
+            ### affichage de l'instruction pour + de transparence ###
+            print(instruction)
+            ### exécution de l'instruction ###
+            try:
+                for x in c.execute(instruction):
+                    print(x)
+            except:
+                print("Une ou plusieurs valeurs de recherches ne sont pas bon")
+            ### fermeture ###
+            connexion.close()
+        ### si database n'est pas valide ###
+        else:
+            print("Action impossible car aucune base de données ouverte")
+
+    ###########################################################################
+    ### fonction d'affichage de tout le contenu de la base 
+    ###########################################################################
+    def dba_montre_tout(self):
+        """montre l'intégralité du contenu de la base de données"""
+        ### si database est un fichier valide ###
+        if self.database != None:
+            ### connexion à la base de données ###
+            ### c analyse les tables, d analyse les colonnes ###
+            connexion = sqlite3.connect(self.database)
+            connexion.row_factory = sqlite3.Row
+            c = connexion.cursor()
+            d = connexion.cursor()
+            ### autre curseur pour analyser le contenu des tables ###
+            connexion2 = sqlite3.connect(self.database)
+            e = connexion2.cursor()
+            ### affichage du contenu ###
+            print("\n...OK... Voilà le contenu :")
+            print(self.database)
+            print("  |")
+            ### analyse par requête du nom des tables présentes avec c ###
+            c.execute("""SELECT name FROM sqlite_master WHERE type = 'table' """)
+            for x in iter(c.fetchall()):
+                ### analyse du nom des colonnes dans la table avec d ###
+                d.execute(f"SELECT * FROM {x[0]}")
+                ### affichage de l'arborescence ###
+                print("  + -",x[0])
+                try:
+                    print("  |       \ _ _ _ _ _", d.fetchone().keys())
+                except:
+                    print("  | ")
+                ### analyse du contenu des colonnes avec e ###
+                for y in e.execute(f"SELECT * FROM {x[0]}"):
+                    ligne = ""
+                    ### concaténation des données dans une ligne ###
+                    for z in range(0, len(y)):
+                        ligne = ligne + str(y[z]) + " - "
+                    ### affichage des données ###
+                    print("  |\t\t\t", ligne)
+            ### fermeture de la base de données ###
+            connexion.close()
+            ### et affichage de fin d'analyse ###
+            print("  | \n  |_ FIN DES DATAS !\n")
+        ### si database n'est pas valide ###
+        else:
+            print("Action impossible car aucune base de données ouverte")
+            
+    ###########################################################################
+    ### fonction d'affichage de toute la structure de la base 
+    ###########################################################################
+    def dba_montre_structure(self):
+        """montre uniquement la structure de la base de données"""
+        ### si database est un fichier valide ###
+        if self.database != None:
+            ### connexion à la base de données ###
+            connexion = sqlite3.connect(self.database)
+            connexion.row_factory = sqlite3.Row
+            c = connexion.cursor()
+            d = connexion.cursor()
+            ### affichage du contenu ###
+            print("\n...OK... Voilà la structure :")
+            print(self.database)
+            print("  |")
+            ### analyse par requête du nom des tables présentes ###
+            c.execute("""SELECT name FROM sqlite_master WHERE type = 'table' """)
+            for x in iter(c.fetchall()):
+                ### analyse du nom des colonnes dans les tables ###
+                d.execute(f"SELECT * FROM {x[0]}")
+                ### affichage de l'arborescence ###
+                print("  + -",x[0])
+                try:
+                    print("  |       \ _ _ _ _ _", d.fetchone().keys())
+                except:
+                    print("  | ")
+            ### fermeture de la base de données ###                 
+            connexion.close()
+            ### et affichage de fin d'analyse ###
+            print("  | \n  |_ FIN DES DATAS !\n")
+        ### si database n'est pas valide ###
+        else:
+            print("Action impossible car aucune base de données ouverte")
+            
+    ###########################################################################        
+    ### fonction d'impression de la structure de la base dans un txt 
+    ###########################################################################
+    def dba_edition_structure(self, nom_fichier_sortie = "analyse_dba.txt"):
+        """imprimer la structure dans un fichier txt"""
+        ### si database est un fichier valide ###
+        if self.database != None:
+            ### crée et ouvre nom_fichier_sortie pour écriture ###
+            fichier_texte = open(nom_fichier_sortie, "w")
+            ### connexion à la base de données ###
+            connexion = sqlite3.connect(self.database)
+            connexion.row_factory = sqlite3.Row
+            c = connexion.cursor()
+            d = connexion.cursor()
+            ### concaténation des lignes pour affichage et écriture ###
+            ligne_entete_01 = "\n...OK...Voilà la structure :"
+            ligne_entete_02 = self.database
+            ligne_entete_03 = "  |"
+            ### affichage des lignes ###
+            print(ligne_entete_01)
+            print(ligne_entete_02)
+            print(ligne_entete_03)
+            ### écriture des lignes dans le fichier texte ###
+            fichier_texte.write(ligne_entete_01 + "\n")
+            fichier_texte.write(ligne_entete_02 + "\n")
+            fichier_texte.write(ligne_entete_03 + "\n")
+            ### analyse par requête du nom de tables présentes ###
+            c.execute("""SELECT name FROM sqlite_master WHERE type = 'table' """)
+            for x in iter(c.fetchall()):
+                ### analyse du nom des colonnes dans la table ###
+                d.execute(f"SELECT * FROM {x[0]}")
+                ### concaténation des lignes pour affichage et écriture ###
+                ligne_A = "  + -" + str(x[0])
+                try:
+                    ligne_B = "  |       \ _ _ _ _ _" + str(d.fetchone().keys())
+                except:
+                    ligne_B = "  | "
+                ### affichage des lignes ###
+                print(ligne_A)
+                print(ligne_B)
+                ### écriture des lignes dans le fichier texte ###
+                fichier_texte.write(ligne_A + "\n")
+                fichier_texte.write(ligne_B + "\n")
+            ### définition de la ligne finale pour affichage et écriture ###
+            ligne_fin = "  | \n  |_ FIN DES DATAS !\n"
+            print(ligne_fin)
+            fichier_texte.write(ligne_fin + "\n")
+            ### fermeture de la base de données et du fichier texte ###
+            connexion.close()
+            fichier_texte.close()
+        ### si database n'est pas valide ###
+        else:
+            print("Action impossible, aucune base de données ouverte")
+
+    ###########################################################################
+    ### fonction d'impression des valeurs d'une table dans un fichier CSV
+    ###########################################################################
+    def dba_edition_contenu(self, table, nom_fichier_sortie = "analyse_dba.csv"):
+        """imprime le contenu d'une table dans un tableau csv"""
+        if self.database != None:
+            ### créer et ouvre nom_fichier_sortie pour écriture ###
+            fichier_csv = open(nom_fichier_sortie, "w", newline = "")
+            ecriture = csv.writer(fichier_csv)
+            ### connexion à la base de données ###
+            connexion = sqlite3.connect(self.database)
+            c = connexion.cursor()
+            ### seconde connexion pour récuperer le nom des colonnes ###
+            connexion2 = sqlite3.connect(self.database)
+            connexion2.row_factory = sqlite3.Row
+            d = connexion2.cursor()
+            try:
+                ### analyse du nom des colonnes et écriture dans le fichier ###
+                instruction2 = (f"SELECT * FROM {table}")
+                d.execute(instruction2)
+                colonnes = d.fetchone()
+                ### affichage du nom des colonnes ###
+                print(colonnes.keys())
+                ### écriture du nom des colonnes dans le fichier ###
+                ecriture.writerow(colonnes.keys())
+                ### analyse du contenu des colonnes et écriture dans le fichier ###
+                instruction = (f"SELECT * FROM {table}")
+                for x in c.execute(instruction):
+                    print(x)
+                    ecriture.writerow(x)
+                ### fermeture du fichier csv et de la base de données ###
+                fichier_csv.close()
+                connexion.close()
+            except:
+                ### en cas d'impossibilité de lecture de la table ###
+                print("La table à analyser n'existe pas")
+        ### si database n'est pas valide ###
+        else:
+            print("Action impossible, aucune base de données ouverte")
+
+-------------------------------------------------------------------------------------------
+
+### Le module CMD ###
+
+# je commence par créer un script et défini son environnement et son encodage, ainsi que l'importation du module :
+#!/usr/bin/python3
+# -*- coding: Utf-8 -*-
+import cmd
+
+# une petite classe que j'appelle Commando, qui hérite des fonctionnalités du module CMD:
+class Commando(cmd.Cmd):
+    # donnons lui un message d'accueil.
+    intro = "BIENVENUE DANS COMMANDO. \nTapez ? pour lister les commandes."
+    # et une invite de commandes.
+    prompt = "_commando_$ "
+    file = None
+
+    # et voilà quelques fonctions, elles doivent toujours commencer avec do_ 
+    def do_bonjour(self, arg):
+        print("Bonjour utilisateur ! J'espère que vous allez bien")
+        
+    def do_gauche(self, arg):
+        print("Vous avez dit Gauche ?")
+        
+    def do_droite(self, arg):
+        print("Vous avez dit Droite ?")
+        
+    def do_fin(self, arg):
+        print("Au revoir")
+        quit()
+
+   # et les fonctions qui permettent d'enregistrer et de restituer une suite de commandes
+   # la fonction record qui permet de commencer un enregistrement dans un fichier de type .cmd passé en argument
+    def do_record(self, arg):
+        self.file = open(arg, "w")
+   # la fonction playback qui permet de restituer une suite de commandes enregistrées dans un fichier .cmd
+    def do_playback(self, arg):
+        self.close()
+        with open(arg, "r") as fichier:
+            self.cmdqueue.extend(fichier.read().splitlines())
+    # la fonction precmd permet de vérifier que le fichier est ouvert et que la commande précédente ne soit pas playback
+    def precmd(self, line):
+        line = line.lower()
+        if self.file and "playback" not in line:
+            print(line, file = self.file)
+        return line
+    # la fonction close qui permet de refermer le fichier
+    def close(self):
+        if self.file:
+            self.file.close()
+            self.file = None
+
+# et hop je boucle le tout pour qu'il puisse tourner:
+Commando().cmdloop()
+
+-------------------------------------------------------------------------------------------
+
+### Un bloc-note avec TKinter ###
+
+#!/usr/bin/python3
+#-*- coding: utf-8 -*-
+from tkinter import *
+from tkinter.messagebox import *
+
+# fonctions de l'application
+def effacer_note():
+    zone_texte.delete("1.0", "end-1c")
+
+def enregistre_note():
+    contenu_note = zone_texte.get("1.0", "end-1c")
+    contenu_note.encode("utf-8")
+    with open("blocnote.txt", "w") as fichier:
+        fichier.write(str(contenu_note))
+    showinfo("Job fait...", "la note a bien été enregistrée !")
+
+# fenêtre de démonstration
+fenetre1 = Tk()
+fenetre1.title("Texte")
+fenetre1.resizable(width = False, height = False)
+# barre de défilement de haut en bas sur le coté droit de la fenêtre
+defilement = Scrollbar(fenetre1)
+defilement.pack(side = RIGHT, fill = Y)
+# définition d'une zone de texte de 25 ligne de haut et de 80 caractères de large
+zone_texte = Text(fenetre1, height = 25, width = 80, yscrollcommand = defilement.set)
+zone_texte.pack(side = LEFT, fill = BOTH)
+# et je couple la barre de défilement de haut en bas avec la zone de texte
+defilement.configure(command = zone_texte.yview)
+# ouverture d'un fichier qui m'a déjà servi précédemment
+with open("blocnote.txt", "r") as fichier:
+    contenu = fichier.read()
+    contenu.encode("utf-8")
+    zone_texte.insert("1.0", contenu)
+# j'ajoute quelques fonctionnalités via un petit menu
+barre_de_menu = Menu(fenetre1)
+fenetre1['menu'] = barre_de_menu
+sous_menu_01 = Menu(barre_de_menu)
+# et je défini les commandes disponibles pour l'utilisateur
+barre_de_menu.add_cascade(label = "note", menu = sous_menu_01)
+sous_menu_01.add_command(label = "Effacer la note", command = effacer_note)
+sous_menu_01.add_command(label = "Enregistrer la note", command = enregistre_note)
+sous_menu_01.add_separator()
+sous_menu_01.add_command(label = "Quitte le bloc-note", command = fenetre1.quit)
+# et je fini par boucler l'application
+fenetre1.mainloop()
+fenetre1.destroy()
+
+-------------------------------------------------------------------------------------------
+
+### TP de conclusion de TKinter - Un petit éditeur de texte ###
+
+#!/usr/bin/python3
+#-*- coding: utf-8 -*-
+from tkinter import *
+from tkinter.messagebox import *
+from tkinter.filedialog import *
+
+# variable contenant le chemin d'accès au fichier en cours.
+fichier_source = None
+
+# fonctions de l'application
+def nouveau_fichier():
+    # ici je pose une question Ok-annuler via un messagebox, si la réponse est oui,
+    # efface le texte et demande une autre question Ok-annuler pour nommer le nouveau fichier
+    if askokcancel("Nouveau ?", "voulez vous créer un nouveau fichier ?") == True:
+        zone_texte.delete("1.0", "end-1c")
+        # et si la réponse à la seconde question est oui, redirection vers la fonction
+        # enregistre_sous()...
+        if askokcancel("nommer ?", "voulez vous déjà donner un nom au nouveau fichier ?") == True:
+            enregistre_sous()
+    else:
+        showerror("action arretée", "action annulée par l'utilisateur")
+
+def effacer():
+    # ici je pose une question oui-non via un messagebox, si la réponse est Oui
+    # la zone de texte est nettoyée
+    if askyesno("effacer le texte", "voulez vous effacer le texte ?") == True:
+        zone_texte.delete("1.0", "end-1c")
+    else:
+        # si la réponse est non, retourne un messagebox pour dire que l'action est annulée
+        showerror("action arretée", "action annulée par l'utilisateur")
+
+def enregistre_fichier():
+    # ici je pose la question oui-non via un messagebox, si la réponse est Oui
+    # et que fichier_source est différent de None...
+    if askyesno("enregistrer le fichier", "voulez vous enregistrer ?") == True:
+        try:
+            contenu_note = zone_texte.get("1.0", "end-1c")
+            contenu_note.encode("utf-8")
+            with open(fichier_source, "w") as fichier:
+                fichier.write(str(contenu_note))
+            # prévenir l'utilisateur que le job est fait
+            fenetre1.title("Edit - " + fichier_source)
+            showinfo("Job fait...", "le fichier a bien été enregistré !")
+        except:
+            # et si ça ne marche pas, prévenir l'utilisateur de la raison
+            showwarning("fichier ?", "aucun fichier cible pour enregistrer !")
+    # et si d'emblée je dis non, prévenir que l'action est annulée
+    else:
+        showerror("action arretée", "action annulée par l'utilisateur")
+
+def ouvrir_fichier():
+    # ici je fais appel à la variable fichier_source pour garder le chemin d'accès au fichier
+    # que j'ouvre via une boite de dialogue d'ouverture de fichier
+    global fichier_source
+    fichier_source = askopenfilename(filetypes = [("texte", ".txt")])
+    with open(fichier_source, "r") as fichier:
+        contenu = fichier.read()
+        zone_texte.delete("1.0", "end-1c")
+        zone_texte.insert("1.0", contenu)
+    fenetre1.title("Edit - " + fichier_source)
+
+def enregistre_sous():
+    # ici je fais appel à une boite de dialogue d'enregistrement pour pouvoir enregistrer
+    # le contenu de la zone de texte dans un nouveau fichier et garder le chemin d'accès via
+    # la variable fichier_source en mémoire en cas de besoin ultérieur.
+    fichier_source = asksaveasfilename(filetypes = [("texte", ".txt")])
+    contenu_note = zone_texte.get("1.0", "end-1c")
+    contenu_note.encode("utf-8")
+    with open(fichier_source, "w") as fichier:
+        fichier.write(str(contenu_note))
+    fenetre1.title("Edit - " + fichier_source)
+    showinfo("Job fait...", "le fichier a bien été enregistré !")
+
+def final():
+    if askyesnocancel("Fini ?", "voulez vous vraiment quitter ?") == True:
+        fenetre1.quit()
+
+def information():
+    showinfo("Au sujet de...", "Edit - Programme d'édition de texte basique - Jan.2020 - Meyer Daniel")
+
+### fenêtre de démonstration ###
+fenetre1 = Tk()
+fenetre1.title("Edit")
+fenetre1.resizable(width = False, height = False)
+# barre de défilement de haut en bas sur le coté droit de la fenêtre
+defilement = Scrollbar(fenetre1)
+defilement.pack(side = RIGHT, fill = Y)
+# définition d'une zone de texte de 25 ligne de haut et de 80 caractères de large.
+zone_texte = Text(fenetre1, height = 25, width = 80, yscrollcommand = defilement.set)
+zone_texte.pack(side = LEFT, fill = BOTH)
+# et je couple le défilement de la zone de texte de haut en bas avec la zone de texte
+defilement.configure(command = zone_texte.yview)
+# j'ajoute quelques fonctionnalités via un petit menu
+barre_de_menu = Menu(fenetre1)
+fenetre1['menu'] = barre_de_menu
+sous_menu_01 = Menu(barre_de_menu)
+sous_menu_02 = Menu(barre_de_menu)
+# et je défini les commandes disponibles pour l'utilisateur
+# un menu fichier pour commencer
+barre_de_menu.add_cascade(label = "Fichier", menu = sous_menu_01)
+sous_menu_01.add_command(label = "Nouveau fichier", command = nouveau_fichier)
+sous_menu_01.add_command(label = "Ouvrir un fichier", command = ouvrir_fichier)
+sous_menu_01.add_separator()
+sous_menu_01.add_command(label = "Enregistrer le fichier", command = enregistre_fichier)
+sous_menu_01.add_command(label = "Enregistrer le fichier sous", command = enregistre_sous)                         
+sous_menu_01.add_separator()
+sous_menu_01.add_command(label = "Effacer la note", command = effacer)
+sous_menu_01.add_command(label = "Quitte le bloc-note", command = final)
+# un menu infos 
+barre_de_menu.add_cascade(label = "Infos", menu = sous_menu_02)
+sous_menu_02.add_command(label = "À propos de cette application", command = information)
+# et je fini par boucler l'application
+fenetre1.mainloop()
+
+# pour arrêter une application tkinter sans déclencher une TclError :
+try:
+    fenetre1.destroy()
+except TclError:
+    sys.exit()
+
+-------------------------------------------------------------------------------------------
+
+### Le module Threading - exemple 1 ###
+
+#!/usr/bin/python3
+#-*- coding: utf-8 -*-
+from threading import *
+
+# création d’une classe qui hérite des attributs de l'objet Thread:
+class Course_a_pied(Thread):
+    # initialisation de la classe
+    def __init__(self, nb_pas_min, nb_pas_max, joggeur):
+        Thread.__init__(self) # initialisation du thread
+        self.nb_pas_min = nb_pas_min
+        self.nb_pas_max = nb_pas_max
+        self.joggeur = joggeur
+
+    # fonction run, qui va s'activer à l'appel de la méthode .start()
+    def run(self):
+        with RLock(): # évite un mélange des threads et les synchronisent
+            for x in range(self.nb_pas_min, self.nb_pas_max):
+                print(f"{self.joggeur} est à : {x}. ")
+
+# définition de 3 threads :
+athlete_1 = Course_a_pied(0, 30, "jog_01")
+athlete_2 = Course_a_pied(0, 30, "jog_02")
+athlete_3 = Course_a_pied(0, 30, "jog_03")
+
+# démarrage des 3 threads en même temps :
+athlete_1.start()
+athlete_2.start()
+athlete_3.start()
+
+# chaque threads attends que les 2 autres soit terminés.
+athlete_1.join()
+athlete_2.join()
+athlete_3.join()
+
+-------------------------------------------------------------------------------------------
+
+### Le module Threading - exemple 2 ###
+
+#!/usr/bin/python3
+#-*- coding: utf-8 -*-
+from threading import *
+
+# une classe qui hérite des attributs de l'objet Thread:
+class Course_a_pied(Thread):
+    # initialisation de la classe
+    def __init__(self, nb_pas_min, nb_pas_max, joggeur):
+        Thread.__init__(self) # initialisation du thread
+        self.nb_pas_min = nb_pas_min
+        self.nb_pas_max = nb_pas_max
+        self.joggeur = joggeur
+    # fonction run, qui va s'activer à l'appel de la méthode .start()
+    def run(self):
+        with RLock(): # évite un mélange des threads et les synchronisent
+            for x in range(self.nb_pas_min, self.nb_pas_max):
+                print(f"{self.joggeur} est à : {x}. ")
+
+# une autre classe qui hérite elle aussi des attributs de l'objet Thread:
+class Chien_de_course(Thread):
+    # initialisation de la classe
+    def __init__(self, nb_pas_min, nb_pas_max, chien):
+        Thread.__init__(self) # initialisation du thread
+        self.nb_pas_min = nb_pas_min
+        self.nb_pas_max = nb_pas_max
+        self.chien = chien
+
+    # fonction run, qui va s'activer à l'appel de la méthode .start()
+    def run(self):
+        with RLock(): # évite un mélange des threads et les synchronisent
+            for x in range(self.nb_pas_min, self.nb_pas_max):
+                print(f"le chien {self.chien} suit à : {x}. ")
+
+# et hop, maintenant que les classes sont prêtes, je passe à la suite… 
+# définition d’un athlète et d’un chien
+athlete_1 = Course_a_pied(0, 30, "jog_01")
+levrier = Chien_de_course(0, 30, "spoutnik")
+
+# les deux commencent la course :
+athlete_1.start()
+levrier.start()
+
+# le premier arrivé attend l’autre :
+athlete_1.join()
+levrier.join()
+
+-------------------------------------------------------------------------------------------
+
+### Un serveur local de dossier partagé en Python ###
+
+#!/usr/bin/python3
+#-*- coding: Utf-8 -*-
+import http.server
+
+PORT = 8008                          # variable comprenant le numéro du port de communication
+server_address = ("", PORT)          # variable comprenant l’adresse du serveur, ici il n’y a rien, donc localhost:8008
+server = http.server.HTTPServer      # création d’un objet http.server.HTTPServer
+handler = http.server.CGIHTTPRequestHandler   # création d’un objet handler CGI pour gérer les réponses du serveur
+handler.cgi_directories = [""]                # définition du dossier contenant les scripts CGI spécifiques (si besoin)
+print("Serveur actif et à l'écoute sur le port : ", PORT)   # un petit mot pour signaler qu’il fonctionne
+
+directe = server(server_address, handler)        # création d’un objet ‘directe’ utilisant l’objet server.
+try :                                            # essai 
+    directe.serve_forever()                      # et lancement de la boucle pour le faire tourner non-stop !
+except KeyboardInterrupt:                        # exception en cas d’interruption du serveur
+    directe.shutdown()                           # arrêt propre du serveur.
+
+-------------------------------------------------------------------------------------------
+
+### Un échange serveur / client en Python ###
+### coté serveur : ###
+
+#!/usr/bin/python3
+#-*- coding: utf-8 -*-
+
+### importation du module socketserver ###
+import socketserver
+
+### petite phrase pour signaler le début de la session ###
+print("Je suis un serveur, j’attends les instructions du client…")
+
+### classe contenant les fonctions du serveur ###
+class Appli_Serveur(socketserver.BaseRequestHandler):
+    ### la fonction handler gère l’écoute et la réponse ###
+    def handle(self): 
+        self.data = self.request.recv(1024).strip()            # la variable self.data réceptionne les bytes entrant
+        print(f"{self.client_address[0]} a dit : {self.data}") # retourner l’IP du client et son message
+        if self.data == (b"salut"):                            # si ce dernier envoi le message ‘salut’ 
+            self.request.sendall(b"Bonjour client !")          # le serveur répondra ceci
+        else:                                 # dans les autres cas, renvoi juste la phrase du client en majuscule
+            self.request.sendall(self.data.upper())
+
+### condition si le script est exécuté depuis un shell $bash ou DOS ###
+if __name__ == "__main__":
+    HOST, PORT = "localhost", 8008        # en local, sur le port 8008 du pc
+    with socketserver.TCPServer((HOST, PORT), Appli_Serveur) as serveur: 
+        serveur.serve_forever()           # démarrage du serveur et prise en compte de la classe pour gérer les échanges
+
+-------------------------------------------------------------------------------------------
+
+### Un échange serveur / client en Python ###
+### coté client : ###
+
+#!/usr/bin/python3
+#-*- coding: utf-8 -*-
+
+### importation du module socket ###
+import socket
+
+### définition d’une petite fonction qui permettra d’envoyer un message sur les sockets du pc ###
+def envoyer(instruction):
+    HOST, PORT = "localhost", 8008                           # en local, sur le port 8008 du pc
+    # ouvre un socket avec un protocole AF_INET (internet standard), et sur un flux standard pour sockets
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock: 
+        sock.connect((HOST, PORT))                           # connexion à l’hôte et au port spécifié
+        sock.sendall(bytes(instruction + "\n", "utf-8"))     # envoi du message en bytes, encodé en UTF-8
+        received = str(sock.recv(8008), "utf-8")             # et réception du message, à décodé en UTF-8
+    print(f"instruction envoyée : {instruction}")            # et affichage 
+    print(f"instruction reçue : {received}")
+
+-------------------------------------------------------------------------------------------
+
+### mon fichier Setupfreeze.py pour générer un executable Windows ###
+
+from cx_Freeze import setup, Executable 
+import os.path
+import sys
+
+# éviter une erreur de type "KeyError: TCL_LIBRARY"
+PYTHON_INSTALL_DIR = os.path.dirname(os.path.dirname(os.__file__))
+os.environ['TCL_LIBRARY'] = os.path.join(PYTHON_INSTALL_DIR, 'tcl', 'tcl8.6')
+os.environ['TK_LIBRARY'] = os.path.join(PYTHON_INSTALL_DIR, 'tcl', 'tk8.6')
+options = {
+    'build_exe': {
+        'include_files':[
+            os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'tk86t.dll'),
+            os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'tcl86t.dll'),
+         ],
+    },}
+
+# Si je souhaite compiler pour autre système d'exploitation...
+base = None 
+if sys.platform == "win32":
+    base = "Win32GUI"
+
+# Fichier que je souhaite inclure dans le dossier de l'exécutable
+includefiles = ["danielico.ico"]  # le nom de l’icône que je souhaite utiliser pour mon application.
+
+# Paramètres de l'exécutable
+target = Executable(
+    script = "essai_exe.py",  # le nom du fichier source contenant le programme que je souhaite convertir en .exe
+    copyright= "Copyright © 2020 - Meyer Daniel",
+    icon = "danielico.ico",  # et le nom de l’icône que je souhaite utiliser
+    base = base)
+
+setup( name = "essai_exe", 
+	version = "0.1" ,
+	description = "" ,
+	options = {'build_exe': {'include_files':includefiles}},
+	executables = [target])
+
+-------------------------------------------------------------------------------------------
+
+### FIN ###
+
+
