@@ -14,6 +14,7 @@ Bonne utilisation !
 Daniel, le 20 février 2020.
 
 ------
+#### There's a basic version of my text and script editor using Python3.8
 
 The editor of texts and scripts which is presented here is fully programmed with Python 3. It works very simply by using a class which initiates a main window integrating a text zone and a menu bar. The program contains various functions which allow basic operations such as: create a new file, open a file, save a file, cut / copy / paste text, and undo or redo an action.
 
